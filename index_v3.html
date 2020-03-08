@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta property="title" content="AWS PDX Hackathon">
+  <meta property="image" content="img/favicon_io/android-chrome-192x192.png">
+  <meta property="description" content="">
+
+  <!--
+
+  -->
+
+  <!-- Custom Title Bar -->
+  <title>AWS PDX Hackathon 2020</title>
+
+  <!-- Bootstrap Core CSS -->
+  <!-- 02/12/2020: Updated to the latest version of Bootstrap (4.141) -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <!-- Custom Fonts -->
+  <script src="https://use.fontawesome.com/4dfd1d7bab.js"></script>
+  <!-- Latest Font Awesome v 5.12.1-->
+  <script src="https://kit.fontawesome.com/8143b3cdce.js" crossorigin="anonymous"></script>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+  rel='stylesheet' type='text/css'> 
+  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic'
+  rel='stylesheet' type='text/css'> 
+  <link href="https://fonts.googleapis.com/css?family=Fredoka+One|Pacifico|Roboto+Slab&display=swap" rel="stylesheet">
+  <!-- Plugin CSS -->
+  <link href="css/magnific-popup.css" rel="stylesheet">
+  <!-- Theme CSS -->
+  <link href="css/creative.min.css" rel="stylesheet">
+
+  <!-- Index CSS -->
+  <link href="css/index.css" rel="stylesheet">
+
+  <script type="text/javascript" src="loccalValues.json"></script>
+
+		<script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.js"></script>
+        <script type="text/javascript">
+            var viz, sheet, table;
+
+            function initializeViz() {
+                var placeholderDiv = document.getElementById("tableauViz");
+                var url = "https://public.tableau.com/views/SuperstoreDashboard_15824009516890/MainDashboard?:display_count=y&:origin=viz_share_link";
+                var options = {
+                    width: placeholderDiv.offsetWidth,
+                    height: placeholderDiv.offsetHeight,
+                    hideTabs: true,
+                    hideToolbar: true,
+                    onFirstInteractive: function () {
+                    workbook = viz.getWorkbook();
+                    activeSheet = workbook.getActiveSheet();
+                    }
+                };
+                viz = new tableau.Viz(placeholderDiv, url, options);
+            }   
+            
+            function filterByRegion(region) {
+            document.write('Hello');
+            activeSheet.applyFilterAsync(
+                "Region",
+                region,
+                tableau.FilterUpdateType.REPLACE);
+            }  
+
+            function filterSingleValue() {
+              activeSheet.applyFilterAsync(
+                "Region",
+                ["Central","South"],
+                tableau.FilterUpdateType.REPLACE);
+            }
+
+
+            function getUnderlyingData(){
+                sheet = viz.getWorkbook().getActiveSheet().getWorksheets().get("Storm Map Sheet");
+              // If the active sheet is not a dashboard, then you can just enter:
+              // viz.getWorkbook().getActiveSheet();
+                options = {
+                    maxRows: 10, // Max rows to return. Use 0 to return all rows
+                    ignoreAliases: false,
+                    ignoreSelection: true,
+                    includeAllColumns: false
+                };
+
+                sheet.getUnderlyingDataAsync(options).then(function(t){
+                       table = t;
+			var tgt = document.getElementById("dataTarget");
+			tgt.innerHTML = "<h4>Underlying Data:</h4><p>" + JSON.stringify(table.getData()) + "</p>";
+                });
+            }
+
+
+            function refresh() {
+              var xhttp = new XMLHttpRequest();
+              xhttp.open("GET", "https://qu55fqgnrl.execute-api.us-west-2.amazonaws.com/dev", true);
+              xhttp.send();
+              xhttp.addEventListener("readystatechange", processRequest, false);
+              
+
+              function processRequest(e) {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                  var response = JSON.parse(xhttp.responseText);
+                  var numberString = response.filterNumber;
+
+                  filterSingleValue();
+
+                  //if(numberString == 1) {
+                   // filterAmericaValue();
+                  //} else if(numberString == 2) {
+                  //  filterEuropeValue();
+                  //} else if(numberString == 3) {
+                  //  filterMiddleEastValue();
+                  //}
+                  // else {
+                  //   addValuesToFilter();
+                  // }
+                  console.log(numberString);
+                }
+              }
+              setTimeout(refresh, 1000);
+            }
+            //refresh();
+                       
+        </script>
+
+</head>
+
+
+    <body onload="initializeViz();">
+
+  
+
+  <section id="work">
+    <div class="">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+
+        
+          <h2 class=" text-uppercase">AWS PDX Hackathon</h2>
+          <hr class="primary">
+
+
+            
+                <div class = "text-center text-muted text-faded text-small mb-1" id="tableauViz" style=" width:100%; height:900px;">
+              
+            </div>
+
+            <!-- <button id="button2" onclick="addValuesToFilter()">Add Europe, Middle East</button> -->
+
+            <div id="dataTarget"></div>
+            <div id="region"></div>
+            <div id="Year"> </div>
+
+        <div class="container">
+            <p class="text-center text-muted text-faded text-small mb-1" style="font-size:.2rem">
+            AWS PDX Hackathon&copy; 2020. All rights reserved.
+            </p>
+        </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+        
+        <!-- Bootstrap 4.1 JS -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+        
+        <!-- Plugin & Theme JavaScript (With Bootstrap 4 Update) -->
+        <script src="js/jquery.easing.min.js"></script>
+        <script src="js/scrollreveal.min.js"></script>
+        <script src="js/jquery.magnific-popup.min.js"></script>
+        <script src="js/creative.min.js"></script>
+        
+
+
+
+    </body>
+</html>
